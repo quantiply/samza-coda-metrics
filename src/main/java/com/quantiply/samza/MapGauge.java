@@ -46,7 +46,7 @@ public class MapGauge extends Gauge<Map<String, String>> {
     }
 
     public Map<String, String> meter(String name, Meter meter) {
-        Map<String,String> data = new HashMap<>();
+        Map<String,String> data = new HashMap<String,String>();
         data.put("name", name);
         data.put("count","" + meter.getCount());
         data.put("oneMinuteRate","" + meter.getOneMinuteRate());
