@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.metrics.version>3.1.1</dropwizard.metrics.version>
         <samza.version>0.8.0</samza.version>
+        <groovy.version>2.4.3</groovy.version>
     </properties>
 
     <dependencies>
@@ -36,6 +37,85 @@
           <artifactId>metrics-core</artifactId>
           <version>${dropwizard.metrics.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.apache.samza</groupId>
+          <artifactId>samza-core_2.10</artifactId>
+          <version>${samza.version}</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.11</version>
+          <scope>test</scope>
+      </dependency>
     </dependencies>
+
+    <pluginRepositories>
+      <pluginRepository>
+        <id>scala-tools.org</id>
+        <name>Scala-tools Maven2 Repository</name>
+        <url>http://scala-tools.org/repo-releases</url>
+      </pluginRepository>
+    </pluginRepositories>
+    
+    <repositories>
+      <repository>
+        <id>my-local-repo</id>
+        <url>file://${user.home}/.m2/repository</url>
+      </repository>
+      <repository>
+        <id>apache-releases</id>
+        <url>https://repository.apache.org/content/groups/public</url>
+      </repository>
+      <repository>
+        <id>scala-tools.org</id>
+        <name>Scala-tools Maven2 Repository</name>
+        <url>https://oss.sonatype.org/content/groups/scala-tools</url>
+      </repository>
+    </repositories>
+
+    <build>
+      <plugins>
+        <plugin>
+           <groupId>org.codehaus.mojo</groupId>
+           <artifactId>build-helper-maven-plugin</artifactId>
+           <version>1.9.1</version>
+           <executions>
+             <execution>
+               <id>add-test-source</id>
+               <phase>generate-sources</phase>
+               <goals>
+                 <goal>add-test-source</goal>
+               </goals>
+               <configuration>
+                 <sources>
+                   <source>src/test/scala</source>
+                 </sources>
+               </configuration>
+             </execution>
+           </executions>
+         </plugin>
+        <plugin>
+          <groupId>org.scala-tools</groupId>
+          <artifactId>maven-scala-plugin</artifactId>
+          <version>2.15.2</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>testCompile</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <jvmArgs>
+              <jvmArg>-Xms64m</jvmArg>
+              <jvmArg>-Xmx1024m</jvmArg>
+            </jvmArgs>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+    
 
 </project>
