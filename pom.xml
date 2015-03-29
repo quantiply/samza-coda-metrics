@@ -10,7 +10,7 @@
 
     <groupId>com.quantiply.samza</groupId>
     <artifactId>coda-metrics</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <name>Samza Coda Metrics</name>
     <description>
@@ -59,6 +59,19 @@
       </pluginRepository>
     </pluginRepositories>
     
+    <distributionManagement>
+        <repository>
+            <id>aws-release</id>
+            <name>AWS Release Repository</name>
+            <url>s3://artifacts.quantezza.com/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>aws-snapshot</id>
+            <name>AWS Snapshot Repository</name>
+            <url>s3://artifacts.quantezza.com/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
     <repositories>
       <repository>
         <id>my-local-repo</id>
@@ -76,6 +89,13 @@
     </repositories>
 
     <build>
+      <extensions>
+          <extension>
+              <groupId>org.kuali.maven.wagons</groupId>
+              <artifactId>maven-s3-wagon</artifactId>
+              <version>1.2.1</version>
+          </extension>
+      </extensions>
       <plugins>
         <plugin>
            <groupId>org.codehaus.mojo</groupId>
