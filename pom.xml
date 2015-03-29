@@ -4,9 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <prerequisites>
+      <maven>3.0.0</maven>
+    </prerequisites>
+
     <groupId>com.quantiply.samza</groupId>
-    <artifactId>metrics</artifactId>
+    <artifactId>coda-metrics</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <name>Samza Coda Metrics</name>
+    <description>
+      Adapter for using Coda Hale Metrics with Samza
+    </description>
 
     <properties>
         <maven.compiler.source>1.7</maven.compiler.source>
