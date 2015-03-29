@@ -8,7 +8,6 @@ public class MetricAdaptor {
     private final MetricsRegistry samzaRegistry;
     private final String groupName;
 
-
     public MetricAdaptor(MetricRegistry codaRegistry, MetricsRegistry samzaRegistry, String groupName) {
         this.codaRegistry = codaRegistry;
         this.samzaRegistry = samzaRegistry;
@@ -21,27 +20,35 @@ public class MetricAdaptor {
     }
 
     public Histogram histogram(String name) {
-        Histogram h = codaRegistry.histogram(name);
-        return registerWithSamza(name, h);
+        return registerWithSamza(name, codaRegistry.histogram(name));
     }
 
     public Counter counter(String name) {
-        Counter c = codaRegistry.counter(name);
-        return registerWithSamza(name, c);
+        return registerWithSamza(name, codaRegistry.counter(name));
     }
 
     public Timer timer(String name) {
-        Timer t = codaRegistry.timer(name);
-        return registerWithSamza(name, t);
+        return registerWithSamza(name, codaRegistry.timer(name));
     }
 
     public Meter meter(String name) {
-        Meter m = codaRegistry.meter(name);
-        return registerWithSamza(name, m);
+        return registerWithSamza(name, codaRegistry.meter(name));
     }
 
     public Gauge gauge(String name, Gauge g) {
-        return registerWithSamza(name, g);
+        return register(name, g);
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public MetricRegistry getCodaRegistry() {
+        return codaRegistry;
+    }
+
+    public MetricsRegistry getSamzaRegistry() {
+        return samzaRegistry;
     }
 
     private <T extends Metric> T registerWithSamza(String name, T metric) {

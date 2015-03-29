@@ -1,42 +1,43 @@
 package com.quantiply.samza
 
-import collection.JavaConversions._
-
-import java.util
-
-import com.codahale.metrics.MetricRegistry
+import com.codahale.metrics.{JmxReporter, MetricRegistry}
 import org.apache.samza.metrics._
 import org.junit.Assert._
 import org.junit.Test
 
+import scala.collection.JavaConversions._
+
 class MetricAdaptorTest {
   val GROUP_NAME = "test.group"
 
-  def createAdaptorAndRegistry() = {
+  def createAdaptor = {
     val samzaRegistry = new MetricsRegistryMap("useless")
-    val adaptor = new MetricAdaptor(new MetricRegistry(), samzaRegistry, GROUP_NAME)
-    (adaptor, samzaRegistry)
+    val codaRegistry = new MetricRegistry()
+    JmxReporter.forRegistry(codaRegistry).inDomain("samza-coda-test").build().start()
+    new MetricAdaptor(codaRegistry, samzaRegistry, GROUP_NAME)
+  }
+
+  def getMetricValueMap(adaptor: MetricAdaptor, name: String) = {
+    adaptor.getSamzaRegistry().asInstanceOf[MetricsRegistryMap].getGroup(GROUP_NAME).get(name).asInstanceOf[Gauge[MapGauge]].getValue.getValue.toMap
   }
 
   @Test
   def testCounter = {
-    val (adaptor, samzaRegistry) = createAdaptorAndRegistry()
-
+    val adaptor = createAdaptor
     val c = adaptor.counter("my-counter")
     c.inc(45)
 
-    val map = samzaRegistry.getGroup(GROUP_NAME).get("my-counter").asInstanceOf[Gauge[MapGauge]].getValue.getValue.toMap
+    val map = getMetricValueMap(adaptor, "my-counter")
     assertEquals(Map("name" -> "my-counter", "count" -> "45"), map)
   }
 
   @Test
   def testMeter = {
-    val (adaptor, samzaRegistry) = createAdaptorAndRegistry()
-
+    val adaptor = createAdaptor
     val m = adaptor.meter("my-meter")
     m.mark(3)
 
-    val map = samzaRegistry.getGroup(GROUP_NAME).get("my-meter").asInstanceOf[Gauge[MapGauge]].getValue.getValue.toMap
+    val map = getMetricValueMap(adaptor, "my-meter")
     assertEquals("3", map("count"))
     assertEquals("my-meter", map("name"))
     assert(Set("fifteenMinuteRate", "fiveMinuteRate", "oneMinuteRate", "meanRate").subsetOf(map.keySet))
@@ -44,24 +45,24 @@ class MetricAdaptorTest {
 
   @Test
   def testTimer = {
-    val (adaptor, samzaRegistry) = createAdaptorAndRegistry()
-
+    val adaptor = createAdaptor
     val t = adaptor.timer("my-timer")
     t.time().stop()
 
-    val map = samzaRegistry.getGroup(GROUP_NAME).get("my-timer").asInstanceOf[Gauge[MapGauge]].getValue.getValue.toMap
+    val map = getMetricValueMap(adaptor, "my-timer")
     assertEquals("my-timer", map("name"))
     assert(Set("75thPercentile", "mean", "min", "max", "99thPercentile", "95thPercentile", "median", "98thPercentile", "stdDev").subsetOf(map.keySet))
   }
 
   @Test
   def testHistogram = {
-    val (adaptor, samzaRegistry) = createAdaptorAndRegistry()
-
+    val adaptor = createAdaptor
     val h = adaptor.histogram("my-hist")
     h.update(5)
 
-    val map = samzaRegistry.getGroup(GROUP_NAME).get("my-hist").asInstanceOf[Gauge[MapGauge]].getValue.getValue.toMap
+//    java.lang.Thread.sleep(1000000L)
+
+    val map = getMetricValueMap(adaptor, "my-hist")
     val expected = Map(
       "75thPercentile" -> "5.0",
       "name" -> "my-hist",
