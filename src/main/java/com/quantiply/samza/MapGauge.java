@@ -12,42 +12,39 @@ import java.util.Map;
 public class MapGauge extends Gauge<Map<String, String>> {
 
     private Metric _metric;
-    private String _name;
 
     public MapGauge(String name, Metric metric) {
         super(name, new HashMap<String, String>());
         _metric = metric;
-        _name = name;
     }
 
     @Override
     public Map<String, String> getValue() {
-        return toMap(_name, _metric);
+        return toMap(_metric);
     }
 
-    private Map<String, String> toMap(String name, Metric metric) {
+    private Map<String, String> toMap(Metric metric) {
         if(Meter.class.isInstance(metric)){
-            return meter(name, (Meter) metric);
+            return meter((Meter) metric);
         }
         else if(Histogram.class.isInstance(metric)){
-            return histogram(name, (Histogram) metric);
+            return histogram((Histogram) metric);
         }
         else if(Counter.class.isInstance(metric)){
-            return counter(name, (Counter) metric);
+            return counter((Counter) metric);
         }
         else if(Timer.class.isInstance(metric)){
-            return timer(name, (Timer) metric);
+            return timer((Timer) metric);
         }
         else if(Gauge.class.isInstance(metric)){
-            return gauge(name, (Gauge) metric);
+            return gauge((Gauge) metric);
         }
 
         return null;
     }
 
-    public Map<String, String> meter(String name, Meter meter) {
+    public Map<String, String> meter(Meter meter) {
         Map<String,String> data = new HashMap<String,String>();
-        data.put("name", name);
         data.put("count","" + meter.getCount());
         data.put("oneMinuteRate","" + meter.getOneMinuteRate());
         data.put("fiveMinuteRate","" + meter.getFiveMinuteRate());
@@ -56,17 +53,15 @@ public class MapGauge extends Gauge<Map<String, String>> {
         return data;
     }
 
-    private Map<String, String> counter(String name, Counter counter) {
+    private Map<String, String> counter(Counter counter) {
         Map<String,String> data = new HashMap<String,String>();
-        data.put("name", name);
         data.put("count", "" + counter.getCount());
         return data;
 
     }
 
-    private Map<String, String> histogram(String name, Histogram histogram) {
+    private Map<String, String> histogram(Histogram histogram) {
         Map<String,String> data = new HashMap<String,String>();
-        data.put("name", name);
         final Snapshot snapshot = histogram.getSnapshot();
         data.put("min","" + snapshot.getMin());
         data.put("max","" + snapshot.getMax());
@@ -79,12 +74,10 @@ public class MapGauge extends Gauge<Map<String, String>> {
         data.put("99thPercentile","" + snapshot.get99thPercentile());
         data.put("999thPercentile", "" + snapshot.get999thPercentile());
         return data;
-
     }
 
-    private Map<String, String> timer(String name, Timer timer) {
+    private Map<String, String> timer(Timer timer) {
         Map<String,String> data = new HashMap<String,String>();
-        data.put("name", name);
         final Snapshot snapshot = timer.getSnapshot();
         data.put("min","" + snapshot.getMin());
         data.put("max","" + snapshot.getMax());
@@ -97,12 +90,10 @@ public class MapGauge extends Gauge<Map<String, String>> {
         data.put("99thPercentile","" + snapshot.get99thPercentile());
         data.put("999thPercentile", "" + snapshot.get999thPercentile());
         return data;
-
     }
 
-    private Map<String, String> gauge(String name, Gauge<?> gauge){
+    private Map<String, String> gauge(Gauge<?> gauge){
         Map<String,String> data = new HashMap<String,String>();
-        data.put("name", name);
         data.put("value", "" + gauge.getValue());
         return data;
     }

@@ -1,7 +1,9 @@
 package com.quantiply.samza
 
 import com.codahale.metrics.{JmxReporter, MetricRegistry}
+import org.apache.samza.config.MapConfig
 import org.apache.samza.metrics._
+import org.apache.samza.metrics.reporter.JmxReporterFactory
 import org.junit.Assert._
 import org.junit.Test
 
@@ -14,11 +16,20 @@ class MetricAdaptorTest {
     val samzaRegistry = new MetricsRegistryMap("useless")
     val codaRegistry = new MetricRegistry()
     JmxReporter.forRegistry(codaRegistry).inDomain("samza-coda-test").build().start()
+
+    val reporter = new JmxReporterFactory().getMetricsReporter("fakeJob", "fakeContainer", new MapConfig(Map[String, String]()))
+    reporter.register("fakeSource", samzaRegistry)
+    reporter.start()
+
     new MetricAdaptor(codaRegistry, samzaRegistry, GROUP_NAME)
   }
 
+  def getMetric(adaptor: MetricAdaptor, name: String) = {
+    adaptor.getSamzaRegistry().asInstanceOf[MetricsRegistryMap].getGroup(GROUP_NAME).get(name).asInstanceOf[MapGauge]
+  }
+
   def getMetricValueMap(adaptor: MetricAdaptor, name: String) = {
-    adaptor.getSamzaRegistry().asInstanceOf[MetricsRegistryMap].getGroup(GROUP_NAME).get(name).asInstanceOf[Gauge[MapGauge]].getValue.getValue.toMap
+    getMetric(adaptor, name).getValue.toMap
   }
 
   @Test
@@ -28,7 +39,7 @@ class MetricAdaptorTest {
     c.inc(45)
 
     val map = getMetricValueMap(adaptor, "my-counter")
-    assertEquals(Map("name" -> "my-counter", "count" -> "45"), map)
+    assertEquals("45", map("count"))
   }
 
   @Test
@@ -39,7 +50,6 @@ class MetricAdaptorTest {
 
     val map = getMetricValueMap(adaptor, "my-meter")
     assertEquals("3", map("count"))
-    assertEquals("my-meter", map("name"))
     assert(Set("fifteenMinuteRate", "fiveMinuteRate", "oneMinuteRate", "meanRate").subsetOf(map.keySet))
   }
 
@@ -50,7 +60,6 @@ class MetricAdaptorTest {
     t.time().stop()
 
     val map = getMetricValueMap(adaptor, "my-timer")
-    assertEquals("my-timer", map("name"))
     assert(Set("75thPercentile", "mean", "min", "max", "99thPercentile", "95thPercentile", "median", "98thPercentile", "stdDev").subsetOf(map.keySet))
   }
 
@@ -60,12 +69,12 @@ class MetricAdaptorTest {
     val h = adaptor.histogram("my-hist")
     h.update(5)
 
-//    java.lang.Thread.sleep(1000000L)
+    //Uncomment and attach jconsole to see what metrics look like in JMX
+    //java.lang.Thread.sleep(1000000L)
 
     val map = getMetricValueMap(adaptor, "my-hist")
     val expected = Map(
       "75thPercentile" -> "5.0",
-      "name" -> "my-hist",
       "mean" -> "5.0",
       "min" -> "5",
       "999thPercentile" -> "5.0",

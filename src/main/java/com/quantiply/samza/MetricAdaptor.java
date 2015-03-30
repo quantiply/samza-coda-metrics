@@ -52,7 +52,7 @@ public class MetricAdaptor {
     }
 
     private <T extends Metric> T registerWithSamza(String name, T metric) {
-        samzaRegistry.newGauge(groupName, name, new MapGauge(name, metric));
+        samzaRegistry.newGauge(groupName, new MapGauge(name, metric));
         return metric;
     }
 
