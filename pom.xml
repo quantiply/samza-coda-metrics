@@ -88,6 +88,19 @@
       </repository>
     </repositories>
 
+    <developers>
+      <developer>
+        <name>Sumit Arrawatia</name>
+        <email>sumit@quantiply.com</email>
+        <timezone>-8</timezone>
+      </developer>
+      <developer>
+        <name>Roger Hoover</name>
+        <email>roger.hoover@quantiply.com</email>
+        <timezone>-8</timezone>
+      </developer>
+    </developers>
+
     <build>
       <extensions>
           <extension>
