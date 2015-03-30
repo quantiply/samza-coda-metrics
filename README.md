@@ -15,9 +15,11 @@ Use the metric in the process() method
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        ...
         long eventTimeMs = ((Long)request.get("timestamp_ms")).longValue();
         long nowMs = System.currentTimeMillis();
         lagFromOrigin.update(nowMs - eventTimeMs);
+    }
 
 See your metrics in the Samza metrics topic for the job
 
