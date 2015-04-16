@@ -76,6 +76,3 @@ Add the dependency
         <version>1.2</version>
       </dependency>
     </dependencies>
-
-#Caveats
-* Metrics are not visible by the Samza JMX Reporter
