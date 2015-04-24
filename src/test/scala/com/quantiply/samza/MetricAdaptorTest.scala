@@ -1,6 +1,6 @@
 package com.quantiply.samza
 
-import com.codahale.metrics.{JmxReporter, MetricRegistry}
+import com.codahale.metrics.{JmxReporter, MetricRegistry, Gauge}
 import org.apache.samza.config.MapConfig
 import org.apache.samza.metrics._
 import org.apache.samza.metrics.reporter.JmxReporterFactory
@@ -32,6 +32,24 @@ class MetricAdaptorTest {
     getMetric(adaptor, name).getValue.toMap
   }
 
+  class MyGauge extends Gauge[Integer] {
+    @Override
+    def getValue = 99
+  }
+
+  @Test
+  def testGauge = {
+    val adaptor = createAdaptor
+    val myGauge = new MyGauge
+    val g = adaptor.gauge("my-gauge", myGauge)
+
+    assertEquals(99, myGauge.getValue)
+
+    val map = getMetricValueMap(adaptor, "my-gauge")
+    assertEquals("gauge", map("type"))
+    assertEquals("99", map("value"))
+  }
+
   @Test
   def testCounter = {
     val adaptor = createAdaptor
@@ -39,6 +57,7 @@ class MetricAdaptorTest {
     c.inc(45)
 
     val map = getMetricValueMap(adaptor, "my-counter")
+    assertEquals("counter", map("type"))
     assertEquals("45", map("count"))
   }
 
@@ -50,6 +69,8 @@ class MetricAdaptorTest {
 
     val map = getMetricValueMap(adaptor, "my-meter")
     assertEquals("3", map("count"))
+    assertEquals("meter", map("type"))
+    assertEquals("SECONDS", map("rateUnit"))
     assert(Set("fifteenMinuteRate", "fiveMinuteRate", "oneMinuteRate", "meanRate").subsetOf(map.keySet))
   }
 
@@ -60,6 +81,8 @@ class MetricAdaptorTest {
     t.time().stop()
 
     val map = getMetricValueMap(adaptor, "my-timer")
+    assertEquals("timer", map("type"))
+    assertEquals("NANOSECONDS", map("durationUnit"))
     assert(Set("75thPercentile", "mean", "min", "max", "99thPercentile", "95thPercentile", "median", "98thPercentile", "stdDev").subsetOf(map.keySet))
   }
 
@@ -74,6 +97,7 @@ class MetricAdaptorTest {
 
     val map = getMetricValueMap(adaptor, "my-hist")
     val expected = Map(
+      "type" -> "histogram",
       "75thPercentile" -> "5.0",
       "mean" -> "5.0",
       "min" -> "5",
