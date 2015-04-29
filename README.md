@@ -27,7 +27,7 @@ See your metrics in the Samza metrics topic for the job
   	  "header": {...},
       "metrics": {
         "org.apache.samza.container.TaskInstanceMetrics": {...},
-        "com.quantiply.rico.playground": {
+        "your.metric.group.name": {
           "lag-from-origin-ms": {
             "type": "histogram",
             "75thPercentile": "24895.0",
