@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014-2015 Quantiply Corporation. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.quantiply.samza
 
 import com.codahale.metrics.{JmxReporter, MetricRegistry, Gauge}
@@ -47,7 +62,7 @@ class MetricAdaptorTest {
 
     val map = getMetricValueMap(adaptor, "my-gauge")
     assertEquals("gauge", map("type"))
-    assertEquals("99", map("value"))
+    assertEquals(99, map("value"))
   }
 
   @Test
@@ -58,7 +73,7 @@ class MetricAdaptorTest {
 
     val map = getMetricValueMap(adaptor, "my-counter")
     assertEquals("counter", map("type"))
-    assertEquals("45", map("count"))
+    assertEquals(45L, map("count"))
   }
 
   @Test
@@ -68,7 +83,7 @@ class MetricAdaptorTest {
     m.mark(3)
 
     val map = getMetricValueMap(adaptor, "my-meter")
-    assertEquals("3", map("count"))
+    assertEquals(3L, map("count"))
     assertEquals("meter", map("type"))
     assertEquals("SECONDS", map("rateUnit"))
     assert(Set("fifteenMinuteRate", "fiveMinuteRate", "oneMinuteRate", "meanRate").subsetOf(map.keySet))
@@ -98,16 +113,16 @@ class MetricAdaptorTest {
     val map = getMetricValueMap(adaptor, "my-hist")
     val expected = Map(
       "type" -> "histogram",
-      "75thPercentile" -> "5.0",
-      "mean" -> "5.0",
-      "min" -> "5",
-      "999thPercentile" -> "5.0",
-      "max" -> "5",
-      "99thPercentile" -> "5.0",
-      "95thPercentile" -> "5.0",
-      "median" -> "5.0",
-      "98thPercentile" -> "5.0",
-      "stdDev" -> "0.0"
+      "75thPercentile" -> 5.0,
+      "mean" -> 5.0,
+      "min" -> 5,
+      "999thPercentile" -> 5.0,
+      "max" -> 5,
+      "99thPercentile" -> 5.0,
+      "95thPercentile" -> 5.0,
+      "median" -> 5.0,
+      "98thPercentile" -> 5.0,
+      "stdDev" -> 0.0
     )
     assertEquals(expected, map)
   }
