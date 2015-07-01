@@ -25,7 +25,7 @@ Copyright 2014-2015 Quantiply Corporation. All rights reserved.
 
     <groupId>com.quantiply.samza</groupId>
     <artifactId>coda-metrics</artifactId>
-    <version>1.4</version>
+    <version>1.5-SNAPSHOT</version>
 
     <name>Samza Coda Metrics</name>
     <description>
