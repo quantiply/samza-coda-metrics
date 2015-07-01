@@ -30,16 +30,16 @@ See your metrics in the Samza metrics topic for the job
         "your.metric.group.name": {
           "lag-from-origin-ms": {
             "type": "histogram",
-            "75thPercentile": "24895.0",
-            "98thPercentile": "25019.0",
-            "min": "672",
-            "median": "722.0",
-            "95thPercentile": "24995.0",
-            "99thPercentile": "25024.0",
-            "max": "25028",
-            "mean": "8099.002017881099",
-            "999thPercentile": "25028.0",
-            "stdDev": "11160.633442938424"
+            "75thPercentile": 24895.0,
+            "98thPercentile": 25019.0,
+            "min": 672,
+            "median": 722.0,
+            "95thPercentile": 24995.0,
+            "99thPercentile": 25024.0,
+            "max": 25028,
+            "mean": 8099.002017881099,
+            "999thPercentile": 25028.0,
+            "stdDev": 11160.633442938424
       },
       ...
  	}
