@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Quantiply Corporation. All rights reserved.
+ * Copyright 2014-2016 Quantiply Corporation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,6 +113,7 @@ class MetricAdaptorTest {
     val map = getMetricValueMap(adaptor, "my-hist")
     val expected = Map(
       "type" -> "histogram",
+      "samples" -> 1,
       "75thPercentile" -> 5.0,
       "mean" -> 5.0,
       "min" -> 5,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Quantiply Corporation. All rights reserved.
+ * Copyright 2014-2016 Quantiply Corporation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,7 @@ public class MapGauge extends Gauge<Map<String, Object>> {
         Map<String,Object> data = new HashMap<>();
         final Snapshot snapshot = histogram.getSnapshot();
         data.put("type", "histogram");
+        data.put("samples", snapshot.size());
         data.put("min", snapshot.getMin());
         data.put("max", snapshot.getMax());
         data.put("mean", snapshot.getMean());
@@ -96,6 +97,7 @@ public class MapGauge extends Gauge<Map<String, Object>> {
         Map<String,Object> data = new HashMap<>();
         final Snapshot snapshot = timer.getSnapshot();
         data.put("type", "timer");
+        data.put("samples", snapshot.size());
         data.put("min", snapshot.getMin());
         data.put("max", snapshot.getMax());
         data.put("mean", snapshot.getMean());
