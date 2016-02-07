@@ -30,6 +30,7 @@ See your metrics in the Samza metrics topic for the job
         "your.metric.group.name": {
           "lag-from-origin-ms": {
             "type": "histogram",
+            "samples": 28,
             "75thPercentile": 24895.0,
             "98thPercentile": 25019.0,
             "min": 672,
@@ -74,6 +75,6 @@ Add the dependency
       <dependency>
         <groupId>com.quantiply.samza</groupId>
         <artifactId>coda-metrics</artifactId>
-        <version>1.3</version>
+        <version>1.5</version>
       </dependency>
     </dependencies>
