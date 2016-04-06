@@ -47,25 +47,13 @@ See your metrics in the Samza metrics topic for the job
 
 #Building With Maven 3
 
-Add the S3 Maven extension
-
-	 <build>
-    	<extensions>
-        <extension>
-           <groupId>org.kuali.maven.wagons</groupId>
-           <artifactId>maven-s3-wagon</artifactId>
-           <version>1.2.1</version>
-        </extension>
-    	</extensions>
-    </build>
-
-Add the S3 Maven Repository
+Add the Quantiply Maven Repository
 
 	 <repositories>
       <repository>
-        <id>aws-release</id>
-        <name>AWS Release Repository</name>
-        <url>s3://artifacts.quantezza.com/release</url>
+        <id>quantiply</id>
+        <name>Quantiply Bintray Repository</name>
+        <url>http://dl.bintray.com/quantiply/quantiply</url>
       </repository>
     </repositories>
 
