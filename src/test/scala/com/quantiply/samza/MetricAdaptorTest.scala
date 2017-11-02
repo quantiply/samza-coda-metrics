@@ -27,6 +27,8 @@ import scala.collection.JavaConversions._
 class MetricAdaptorTest {
   val GROUP_NAME = "test.group"
 
+  val RATE_KEYS = Set("fifteenMinuteRate", "fiveMinuteRate", "oneMinuteRate", "meanRate")
+
   def createAdaptor = {
     val samzaRegistry = new MetricsRegistryMap("useless")
     val codaRegistry = new MetricRegistry()
@@ -86,7 +88,7 @@ class MetricAdaptorTest {
     assertEquals(3L, map("count"))
     assertEquals("meter", map("type"))
     assertEquals("SECONDS", map("rateUnit"))
-    assert(Set("fifteenMinuteRate", "fiveMinuteRate", "oneMinuteRate", "meanRate").subsetOf(map.keySet))
+    assert(RATE_KEYS.subsetOf(map.keySet))
   }
 
   @Test
@@ -99,6 +101,7 @@ class MetricAdaptorTest {
     assertEquals("timer", map("type"))
     assertEquals("NANOSECONDS", map("durationUnit"))
     assert(Set("75thPercentile", "mean", "min", "max", "99thPercentile", "95thPercentile", "median", "98thPercentile", "stdDev").subsetOf(map.keySet))
+    assert(RATE_KEYS.subsetOf(map.keySet))
   }
 
   @Test
@@ -113,6 +116,7 @@ class MetricAdaptorTest {
     val map = getMetricValueMap(adaptor, "my-hist")
     val expected = Map(
       "type" -> "histogram",
+      "count" -> 1,
       "samples" -> 1,
       "75thPercentile" -> 5.0,
       "mean" -> 5.0,
