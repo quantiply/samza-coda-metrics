@@ -58,45 +58,36 @@ public class MapGauge extends Gauge<Map<String, Object>> {
     public Map<String, Object> meter(Meter meter) {
         Map<String,Object> data = new HashMap<>();
         data.put("type", "meter");
-        data.put("count", meter.getCount());
-        data.put("oneMinuteRate", meter.getOneMinuteRate());
-        data.put("fiveMinuteRate", meter.getFiveMinuteRate());
-        data.put("fifteenMinuteRate", meter.getFifteenMinuteRate());
-        data.put("meanRate", meter.getMeanRate());
-        data.put("rateUnit", "SECONDS");
+        addMetered(data, meter);
         return data;
     }
 
     private Map<String, Object> counter(Counter counter) {
         Map<String,Object> data = new HashMap<>();
         data.put("type", "counter");
-        data.put("count", counter.getCount());
+        addCounting(data, counter);
         return data;
 
     }
 
     private Map<String, Object> histogram(Histogram histogram) {
         Map<String,Object> data = new HashMap<>();
-        final Snapshot snapshot = histogram.getSnapshot();
         data.put("type", "histogram");
-        data.put("samples", snapshot.size());
-        data.put("min", snapshot.getMin());
-        data.put("max", snapshot.getMax());
-        data.put("mean", snapshot.getMean());
-        data.put("stdDev", snapshot.getStdDev());
-        data.put("median", snapshot.getMedian());
-        data.put("75thPercentile", snapshot.get75thPercentile());
-        data.put("95thPercentile", snapshot.get95thPercentile());
-        data.put("98thPercentile", snapshot.get98thPercentile());
-        data.put("99thPercentile", snapshot.get99thPercentile());
-        data.put("999thPercentile", snapshot.get999thPercentile());
+        addSnapshot(data, histogram.getSnapshot());
+        addCounting(data, histogram);
         return data;
     }
 
     private Map<String, Object> timer(Timer timer) {
         Map<String,Object> data = new HashMap<>();
-        final Snapshot snapshot = timer.getSnapshot();
         data.put("type", "timer");
+        data.put("durationUnit", "NANOSECONDS");
+        addSnapshot(data, timer.getSnapshot());
+        addMetered(data, timer);
+        return data;
+    }
+
+    private void addSnapshot(Map<String,Object> data, Snapshot snapshot) {
         data.put("samples", snapshot.size());
         data.put("min", snapshot.getMin());
         data.put("max", snapshot.getMax());
@@ -108,8 +99,19 @@ public class MapGauge extends Gauge<Map<String, Object>> {
         data.put("98thPercentile", snapshot.get98thPercentile());
         data.put("99thPercentile", snapshot.get99thPercentile());
         data.put("999thPercentile", snapshot.get999thPercentile());
-        data.put("durationUnit", "NANOSECONDS");
-        return data;
+    }
+
+    private void addMetered(Map<String,Object> data, Metered metered) {
+        data.put("oneMinuteRate", metered.getOneMinuteRate());
+        data.put("fiveMinuteRate", metered.getFiveMinuteRate());
+        data.put("fifteenMinuteRate", metered.getFifteenMinuteRate());
+        data.put("meanRate", metered.getMeanRate());
+        data.put("rateUnit", "SECONDS");
+        addCounting(data, metered);
+    }
+
+    private void addCounting(Map<String,Object> data, Counting counting) {
+        data.put("count", counting.getCount());
     }
 
     private Map<String, Object> gauge(com.codahale.metrics.Gauge gauge){
